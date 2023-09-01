@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Select, Option } from "@material-tailwind/react";
 import { connect } from 'react-redux';
 import Map from '../components/Map';
+import FormInput from '../components/FormInput';
 
 const Home = ({ users }) => {
     const [selectUser, setSelectUser] = useState('')
@@ -9,49 +10,64 @@ const Home = ({ users }) => {
     const [body, setBody] = useState('')
     const [position, setPosition] = useState()
 
+    const [errorUser, setErrorUser] = useState(false)
+    const [errorTitle, setErrorTitle] = useState(false)
+    const [errorBody, setErrorBody] = useState(false)
+
     const onUserChange = (e) => {
         setSelectUser(e)
+        setErrorUser(false)
         const select = users?.find((user) => user?.id === e)
         setPosition([select?.address?.geo?.lat, select?.address?.geo?.lng])
     }
 
+    const onTitleChange = (e) => {
+        setTitle(e)
+        setErrorTitle(false)
+    }
+
+    const onBodyChange = (e) => {
+        setBody(e)
+        setErrorBody(false)
+    }
+
     const onSubmit = e => {
         e.preventDefault()
+        if (selectUser?.length === 0) {
+            setErrorUser(true)
+        }
+        if (title?.length === 0) {
+            setErrorTitle(true)
+        }
+        if (body?.length === 0) {
+            setErrorBody(true)
+        }
+
+        if (selectUser && title && body) {
+            console.log("hi");
+        }
     }
 
     return (
         <div className=' bg-[#eef1f3] flex flex-col justify-center items-center p-5 xl:py-12 min-h-screen' >
             <Map position={position} city={users?.find((user) => user?.id === selectUser)?.address?.city} />
             <form className="mt-10" onSubmit={onSubmit} >
-                <div className="flex w-72 md:w-80 xl:w-96 flex-col gap-6 mb-3 z-10">
-                    <Select className='bg-white' size="md" label="Select User" onChange={e => onUserChange(parseInt(e))} >
+
+                <div className="flex w-72 md:w-80 xl:w-96 flex-col gap-1 mb-3 z-10">
+                    <Select className='bg-white' size="md" label="Select User" onChange={e => onUserChange(parseInt(e))} error={errorUser} >
                         {users?.map((user) => {
                             return (
                                 <Option key={user?.id} value={user?.id.toString()} className='' >{user?.name}</Option>
                             )
                         })}
                     </Select>
+                    {errorUser && <span className='ml-1 text-xs text-red-600' >Please select a user</span>}
                 </div>
-                <div className="mb-3">
-                    <input value={title} onChange={e => setTitle(e.target.value)}
-                        type="text"
-                        placeholder="Title"
-                        name="title"
-                        className='w-full h-9 rounded-md pl-4 border border-[#B0BEC5]'
-                        required
-                    />
-                </div>
-                <div className="mb-5">
-                    <input value={body} onChange={e => setBody(e.target.value)}
-                        type="text"
-                        placeholder="Body"
-                        name="body"
-                        className='w-full h-9 rounded-md pl-4 border border-[#B0BEC5]'
-                        required
-                    />
-                </div>
-                <div className='flex justify-center' >
-                    <button className='bg-blue-500 font-semibold w-full h-10 rounded-sm' type='submit' >Submit</button>
+                <FormInput value={title} placeholder={'Title'} onChange={onTitleChange} error={errorTitle} errorMsg={'Please enter title'} />
+                <FormInput value={body} placeholder={'Body'} onChange={onBodyChange} error={errorBody} errorMsg={'Please enter body'} />
+
+                <div className='flex justify-center mt-2' >
+                    <button className='bg-blue-500 active:scale-95 active:bg-blue-700 duration-500 font-semibold w-full h-10 rounded-sm' type='submit' >Submit</button>
                 </div>
             </form>
 
