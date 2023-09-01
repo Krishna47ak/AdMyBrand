@@ -2,6 +2,7 @@ import './App.css';
 import { useEffect } from 'react';
 
 import Home from './screens/Home';
+import Alert from './components/Alert';
 
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Provider } from "react-redux";
@@ -16,6 +17,7 @@ function App() {
   return (
     <Provider store={store}>
       <Router>
+        <Alert />
         <Routes>
           <Route exact path="/" element={<Home />} />
         </Routes>
