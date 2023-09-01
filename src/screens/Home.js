@@ -4,7 +4,9 @@ import { connect } from 'react-redux';
 import Map from '../components/Map';
 import FormInput from '../components/FormInput';
 
-const Home = ({ users }) => {
+import { postUser } from '../store/actions/user';
+
+const Home = ({ users, postUser }) => {
     const [selectUser, setSelectUser] = useState('')
     const [title, setTitle] = useState('')
     const [body, setBody] = useState('')
@@ -44,8 +46,10 @@ const Home = ({ users }) => {
         }
 
         if (selectUser && title && body) {
-            console.log("hi");
+            postUser(title, body, selectUser)
         }
+        setTitle('')
+        setBody('')
     }
 
     return (
@@ -67,7 +71,7 @@ const Home = ({ users }) => {
                 <FormInput value={body} placeholder={'Body'} onChange={onBodyChange} error={errorBody} errorMsg={'Please enter body'} />
 
                 <div className='flex justify-center mt-2' >
-                    <button className='bg-blue-500 active:scale-95 active:bg-blue-700 duration-500 font-semibold w-full h-10 rounded-sm' type='submit' >Submit</button>
+                    <button className='bg-blue-500 active:scale-90 active:bg-blue-700 duration-500 font-semibold w-full h-10 rounded-sm' type='submit' >Submit</button>
                 </div>
             </form>
 
@@ -79,4 +83,4 @@ const mapStateToProps = state => ({
     users: state.user.users
 })
 
-export default connect(mapStateToProps)(Home)
+export default connect(mapStateToProps, { postUser })(Home)
